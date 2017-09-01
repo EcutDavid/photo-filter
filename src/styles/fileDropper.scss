@@ -1,0 +1,18 @@
+.fileDroper {
+  text-align: center;
+
+  .receiver {
+    cursor: pointer;
+    display: inline-block;
+    border: 2px dashed #bbb;
+    padding: 30px 60px;
+    margin: 10px;
+    font-weight: bold;
+    color: #444;
+
+    &.onDragOver {
+      background: skyblue;
+      opacity: 0.6;
+    }
+  }
+}
