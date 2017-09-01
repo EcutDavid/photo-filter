@@ -58,7 +58,10 @@ export default class FileDropper extends React.Component<IFileDroperProps, IFile
       try {
         const img = new Image();
         img.src = evt.target.result;
+
         this.props.handleImage(img);
+
+
       } catch (e) {
         return alert('the file\'s content isn\'t a valid JSON text');
       }
@@ -70,6 +73,11 @@ export default class FileDropper extends React.Component<IFileDroperProps, IFile
   handleDragOver(evt, isDragOver) {
     evt.stopPropagation();
     evt.preventDefault();
+    // const files = evt.dataTransfer.files;
+    // if (files.length) {
+    //   debugger
+    //   this.handleFileInput(files);
+    // }
     if (isDragOver !== this.state.isDragOver) {
       this.setState({ isDragOver });
     }
