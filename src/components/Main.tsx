@@ -19,6 +19,7 @@ interface IComponentState {
 
 export default class Main extends React.Component<{}, IComponentState> {
   private sprite = new PIXI.Sprite(PIXI.Texture.EMPTY);
+  private needUpdateDownloadLink = false;
 
   constructor() {
     super();
@@ -45,13 +46,14 @@ export default class Main extends React.Component<{}, IComponentState> {
       const { blur, pixelateX, pixelateY } = this.state;
       blurFilter.blur = blur;
       (customizedFilter.uniforms as any).size = [pixelateX, pixelateY];
-      if (this.refs.link) {
+      pixiAPP.render();
+      if (this.needUpdateDownloadLink) {
         (this.refs.link as HTMLElement).setAttribute(
           'href',
           pixiAPP.renderer.view.toDataURL(),
         );
+        this.needUpdateDownloadLink = false;
       }
-      pixiAPP.render();
     });
   }
 
@@ -80,15 +82,21 @@ export default class Main extends React.Component<{}, IComponentState> {
           ratio = DEFAULT_RENDERER_WIDTH / width;
           rendererHeight = DEFAULT_RENDERER_HEIGHT / (width / temp);
         }
+      } else {
+        rendererWidth = width < rendererWidth ? width : rendererWidth;
+        rendererHeight = height < rendererHeight ? height : rendererHeight;
       }
       this.sprite.scale.set(ratio, ratio);
+
       pixiAPP.renderer.resize(rendererWidth, rendererHeight);
       this.setState({ hasImg: true });
+      this.needUpdateDownloadLink = true;
     });
   }
 
   onSlideChangeGenerator = key => {
     return (evt: React.FormEvent<HTMLInputElement>) => {
+      this.needUpdateDownloadLink = true;
       this.setState({ [key]: evt.currentTarget.value });
     };
   }
