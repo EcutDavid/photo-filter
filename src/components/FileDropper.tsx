@@ -2,8 +2,6 @@ import * as fileDialog from 'file-dialog';
 import * as React from 'react';
 import 'styles/fileDropper.scss';
 
-// PIXI.Sprite.fromImage()
-
 interface IFileDroperState {
   isDragOver: boolean;
 }
@@ -24,14 +22,14 @@ export default class FileDropper extends React.Component<IFileDroperProps, IFile
     document.addEventListener('drop', evt => evt.preventDefault());
   }
 
-  handlefileDialog() {
+  handlefileDialog = () => {
     fileDialog()
       .then(files => {
         this.handleFileInput(files);
       });
   }
 
-  hadnleDrop(evt) {
+  hadnleDrop = (evt) => {
     this.setState({ isDragOver: false });
     evt.stopPropagation();
     evt.preventDefault();
@@ -40,7 +38,7 @@ export default class FileDropper extends React.Component<IFileDroperProps, IFile
     this.handleFileInput(files);
   }
 
-  handleFileInput(files: File[]) {
+  handleFileInput = (files: File[]) => {
     if (files.length !== 1) {
       return alert('Just give me one file please :)');
     }
@@ -58,10 +56,7 @@ export default class FileDropper extends React.Component<IFileDroperProps, IFile
       try {
         const img = new Image();
         img.src = evt.target.result;
-
         this.props.handleImage(img);
-
-
       } catch (e) {
         return alert('the file\'s content isn\'t a valid JSON text');
       }
@@ -73,11 +68,6 @@ export default class FileDropper extends React.Component<IFileDroperProps, IFile
   handleDragOver(evt, isDragOver) {
     evt.stopPropagation();
     evt.preventDefault();
-    // const files = evt.dataTransfer.files;
-    // if (files.length) {
-    //   debugger
-    //   this.handleFileInput(files);
-    // }
     if (isDragOver !== this.state.isDragOver) {
       this.setState({ isDragOver });
     }
@@ -90,15 +80,15 @@ export default class FileDropper extends React.Component<IFileDroperProps, IFile
       <div className="fileDroper">
         <div
           className={`receiver ${isDragOver ? 'onDragOver' : ''}`}
-          onClick={() => this.handlefileDialog()}
+          onClick={this.handlefileDialog}
           onDragOver={evt => this.handleDragOver(evt, true)}
           onDragLeave={evt => this.handleDragOver(evt, false)}
-          onDrop={evt => this.hadnleDrop(evt)}
+          onDrop={this.hadnleDrop}
         >
           <div>
             <p>Drop your image here</p>
             <p>or</p>
-            <p>Click here to open it</p>
+            <p>Click here to select the image</p>
           </div>
         </div>
       </div>
