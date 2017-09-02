@@ -8,7 +8,7 @@
     "lint": "eslint ./src",
     "serve:dist": "node server.js --env=dist",
     "start": "PORT=8300 webpack-dev-server  --env=dev",
-    "deploy": "gh-pages -d dist",
+    "deploy": "yarn dist && gh-pages -d dist",
     "test": "mocha --require babel-register",
     "initTsc": "tslint --init"
   },
@@ -16,9 +16,9 @@
   "keywords": [],
   "author": "David Guan(davidguandev@gmail.com)",
   "devDependencies": {
+    "@types/pixi.js": "^4.5.3",
     "@types/react": "^16.0.5",
     "@types/react-dom": "^15.5.4",
-    "@types/pixi.js": "^4.5.3",
     "autoprefixer": "^6.3.6",
     "babel-core": "^6.0.0",
     "babel-eslint": "^6.0.0",
@@ -36,7 +36,7 @@
     "eslint": "^2.2.0",
     "eslint-plugin-react": "^5.0.0",
     "file-loader": "^0.8.4",
-    "gh-pages": "^0.12.0",
+    "gh-pages": "^1.0.0",
     "glob": "^7.0.0",
     "html-webpack-plugin": "^2.28.0",
     "isparta-instrumenter-loader": "^1.0.0",
