@@ -30,18 +30,19 @@ export default class Main extends React.Component<{}, IComponentState> {
     pixiAPP = new PIXI.Application({ backgroundColor: 0xffffff });
     pixiAPP.renderer.autoResize = true;
     pixiAPP.renderer.resize(0, 0);
+    (this.refs.pixi as HTMLElement).appendChild(pixiAPP.view);
     pixiAPP.stage.addChild(this.sprite);
+
     const blurFilter = new PIXI.filters.BlurFilter(3);
     const customizedFilter = new PIXI.Filter(
       PIXI.Filter.defaultVertexSrc,
       fragmentShader,
     );
-
     this.sprite.filters = [
       blurFilter,
       customizedFilter,
     ];
-    (this.refs.pixi as HTMLElement).appendChild(pixiAPP.view);
+
     pixiAPP.ticker.add(() => {
       const { blur, pixelateX, pixelateY } = this.state;
       blurFilter.blur = blur;
@@ -55,13 +56,6 @@ export default class Main extends React.Component<{}, IComponentState> {
         this.needUpdateDownloadLink = false;
       }
     });
-  }
-
-  handleFiles = event => {
-    if (event.target.files && event.target.files.length === 1) {
-      const reader = new FileReader();
-      reader.readAsDataURL(event.target.files[0]);
-    }
   }
 
   handleImage = (img: HTMLImageElement) => {
@@ -102,7 +96,7 @@ export default class Main extends React.Component<{}, IComponentState> {
   }
 
   render() {
-    // TODO: generate sliders automatically instead of current solution
+    // TODO: generate sliders automatically instead of current ugly solution
     const { hasImg, blur, pixelateX, pixelateY } = this.state;
 
     return (

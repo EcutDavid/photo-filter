@@ -12,9 +12,7 @@ interface IFileDroperProps {
 export default class FileDropper extends React.Component<IFileDroperProps, IFileDroperState> {
   constructor() {
     super();
-    this.state = {
-      isDragOver: false,
-    };
+    this.state = { isDragOver: false };
     // Disable default browser DND featrue such as open an image.
     // This is the not place to put these handlers actually.
     document.addEventListener('dragover', evt => evt.preventDefault());
@@ -29,7 +27,7 @@ export default class FileDropper extends React.Component<IFileDroperProps, IFile
       });
   }
 
-  hadnleDrop = (evt) => {
+  hadnleDrop = (evt: React.DragEvent<{}>) => {
     this.setState({ isDragOver: false });
     evt.stopPropagation();
     evt.preventDefault();
@@ -38,7 +36,7 @@ export default class FileDropper extends React.Component<IFileDroperProps, IFile
     this.handleFileInput(files);
   }
 
-  handleFileInput = (files: File[]) => {
+  handleFileInput = (files: FileList) => {
     if (files.length !== 1) {
       return alert('Just give me one file please :)');
     }
@@ -58,7 +56,7 @@ export default class FileDropper extends React.Component<IFileDroperProps, IFile
         img.src = evt.target.result;
         this.props.handleImage(img);
       } catch (e) {
-        return alert('the file\'s content isn\'t a valid JSON text');
+        return alert(e);
       }
     };
 
