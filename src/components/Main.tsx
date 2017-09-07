@@ -48,7 +48,7 @@ export default class Main extends React.Component<{}, IComponentState> {
 
   constructor() {
     super();
-    this.state = { hasImg: false, pixelateX: 4, pixelateY: 4, blur: 0 };
+    this.state = { hasImg: false, pixelateX: 1, pixelateY: 1, blur: 2 };
   }
 
   componentDidMount() {
@@ -106,6 +106,8 @@ export default class Main extends React.Component<{}, IComponentState> {
         rendererHeight = height < rendererHeight ? height : rendererHeight;
       }
       this.sprite.scale.set(ratio, ratio);
+      (this.refs.pixi as HTMLElement).style.width = rendererWidth + 'px';
+      (this.refs.pixi as HTMLElement).style.height = rendererHeight + 'px';
 
       pixiAPP.renderer.resize(rendererWidth, rendererHeight);
       this.setState({ hasImg: true });
@@ -121,13 +123,11 @@ export default class Main extends React.Component<{}, IComponentState> {
   }
 
   render() {
-    // TODO: generate sliders automatically instead of current ugly solution
-    const { hasImg, blur, pixelateX, pixelateY } = this.state;
+    const { hasImg } = this.state;
 
     return (
       <div className="main">
         <Header handleImage={this.handleImage} />
-        <FileDropper handleImage={this.handleImage} />
         { hasImg && (
           <div className="control-panel">
           {
@@ -147,11 +147,13 @@ export default class Main extends React.Component<{}, IComponentState> {
           </div>
         )}
         <div
-          className="pixi-container"
+          className={`pixi-container ${hasImg ? '' : 'default'}`}
           ref="pixi"
           style={{ height: DEFAULT_RENDERER_HEIGHT, width: DEFAULT_RENDERER_WIDTH }}
-        />
-        { hasImg && <a ref="link" download="output.png" id="downloader">Download Image</a>}
+        >
+          <FileDropper className="file-dropper" handleImage={this.handleImage} />
+        </div>
+        { hasImg && <a ref="link" className="button" download="output.png" id="downloader">Download Image</a>}
       </div>
     );
   }

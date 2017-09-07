@@ -6,6 +6,7 @@ interface IFileDroperState {
   isDragOver: boolean;
 }
 interface IFileDroperProps {
+  className: string;
   handleImage(img: HTMLImageElement): void;
 }
 
@@ -73,10 +74,11 @@ export default class FileDropper extends React.Component<IFileDroperProps, IFile
 
   render() {
     const { isDragOver } = this.state;
+    const { className } = this.props;
 
     return (
       <div
-        className={`receiver ${isDragOver ? 'onDragOver' : ''}`}
+        className={`receiver ${className} ${isDragOver ? 'on-drag-over' : ''}`}
         onDragOver={evt => this.handleDragOver(evt, true)}
         onDragLeave={evt => this.handleDragOver(evt, false)}
         onDrop={this.hadnleDrop}
