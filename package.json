@@ -61,6 +61,7 @@
   },
   "dependencies": {
     "file-dialog": "0.0.6",
+    "font-awesome": "^4.7.0",
     "foundation-sites": "6.2.4-rc1",
     "normalize.css": "^4.0.0",
     "pixi.js": "^4.5.5",

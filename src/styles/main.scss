@@ -24,6 +24,15 @@
     &.default {
       top: 200px;
     }
+
+    .file-mentor {
+      font-size: 20px;
+      color: #68738E;
+
+      i {
+        font-size: 250px;
+      }
+    }
   }
 
   .control-panel {
@@ -60,5 +69,12 @@
     margin-top: 15px;
     font-size: 15px;
     font-weight: bold;
+
+    i {
+      position: relative;
+      right: 2px;
+      top: 1px;
+      width: 17px;
+    }
   }
 }

@@ -6,6 +6,7 @@ import * as ReactDOM from 'react-dom';
 import App from './components/Main';
 
 PIXI.utils.skipHello();
+import 'font-awesome/css/font-awesome.min.css';
 import 'normalize.css/normalize.css';
 
 import 'styles/reset.scss';

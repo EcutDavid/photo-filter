@@ -45,7 +45,7 @@ export default class Header extends React.Component<IFileDroperProps> {
     return (
       <div className="header">
         <h1>Photo Filter</h1>
-        <button className="button" onClick={this.handlefileDialog}>Open Image</button>
+        <button className="button" onClick={this.handlefileDialog}>Open Photo</button>
       </div>
     );
   }

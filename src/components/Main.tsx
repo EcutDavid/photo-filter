@@ -17,6 +17,7 @@ interface IComponentState {
   pixelateX: number;
   pixelateY: number;
   blur: number;
+  noise: number;
 }
 
 interface IFilterSetting {
@@ -29,6 +30,11 @@ const settingList: IFilterSetting[] = [{
   key: 'blur',
   label: 'Blur: ',
   max: 20,
+  min: 0,
+}, {
+  key: 'noise',
+  label: 'Noise: ',
+  max: 8,
   min: 0,
 }, {
   key: 'pixelateX',
@@ -48,7 +54,7 @@ export default class Main extends React.Component<{}, IComponentState> {
 
   constructor() {
     super();
-    this.state = { hasImg: false, pixelateX: 1, pixelateY: 1, blur: 2 };
+    this.state = { hasImg: false, pixelateX: 1, pixelateY: 1, blur: 1, noise: 0 };
   }
 
   componentDidMount() {
@@ -59,18 +65,21 @@ export default class Main extends React.Component<{}, IComponentState> {
     pixiAPP.stage.addChild(this.sprite);
 
     const blurFilter = new PIXI.filters.BlurFilter(3);
+    const noiseFilter = new PIXI.filters.NoiseFilter(3);
     const customizedFilter = new PIXI.Filter(
       PIXI.Filter.defaultVertexSrc,
       fragmentShader,
     );
     this.sprite.filters = [
+      noiseFilter,
       blurFilter,
       customizedFilter,
     ];
 
     pixiAPP.ticker.add(() => {
-      const { blur, pixelateX, pixelateY } = this.state;
+      const { blur, noise, pixelateX, pixelateY } = this.state;
       blurFilter.blur = blur;
+      noiseFilter.noise = noise;
       (customizedFilter.uniforms as any).size = [pixelateX, pixelateY];
       pixiAPP.render();
       if (this.needUpdateDownloadLink) {
@@ -84,9 +93,9 @@ export default class Main extends React.Component<{}, IComponentState> {
   }
 
   handleImage = (img: HTMLImageElement) => {
-    this.sprite.texture = PIXI.Texture.from(img.src);
+    const process = ({ height, width, texture }) => {
+      this.sprite.texture = texture;
 
-    this.sprite.texture.baseTexture.on('loaded', ({ height, width }) => {
       let ratio = 1;
       let rendererWidth = DEFAULT_RENDERER_WIDTH;
       let rendererHeight = DEFAULT_RENDERER_HEIGHT;
@@ -112,7 +121,19 @@ export default class Main extends React.Component<{}, IComponentState> {
       pixiAPP.renderer.resize(rendererWidth, rendererHeight);
       this.setState({ hasImg: true });
       this.needUpdateDownloadLink = true;
-    });
+    };
+    const src = PIXI.loader.resources[img.src];
+    if (src) {
+      const { texture }  = src;
+      process({ height: texture.height, width: texture.width, texture });
+    } else {
+      PIXI.loader
+        .add(img.src)
+        .load(() => {
+          const { texture } = PIXI.loader.resources[img.src];
+          process({ height: texture.height, width: texture.width, texture });
+        });
+    }
   }
 
   onSlideChangeGenerator = key => {
@@ -152,8 +173,18 @@ export default class Main extends React.Component<{}, IComponentState> {
           style={{ height: DEFAULT_RENDERER_HEIGHT, width: DEFAULT_RENDERER_WIDTH }}
         >
           <FileDropper className="file-dropper" handleImage={this.handleImage} />
+          {!hasImg && (
+            <div className="file-mentor">
+              <p>Upload your photo by dragging it to here or clicking the right-top button :)</p>
+              <i className="fa fa-picture-o" />
+            </div>
+          )}
         </div>
-        { hasImg && <a ref="link" className="button" download="output.png" id="downloader">Download Image</a>}
+        { hasImg && (
+          <a ref="link" className="button" download="output.png" id="downloader">
+            <i className="fa fa-download" />Download
+          </a>
+        )}
       </div>
     );
   }
