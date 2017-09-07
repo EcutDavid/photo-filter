@@ -17,6 +17,7 @@
   "author": "David Guan(davidguandev@gmail.com)",
   "devDependencies": {
     "@types/pixi.js": "^4.5.3",
+    "@types/rc-slider": "^8.1.1",
     "@types/react": "^16.0.5",
     "@types/react-dom": "^15.5.4",
     "autoprefixer": "^6.3.6",
@@ -63,6 +64,7 @@
     "foundation-sites": "6.2.4-rc1",
     "normalize.css": "^4.0.0",
     "pixi.js": "^4.5.5",
+    "rc-slider": "^8.3.1",
     "react": "^15.0.0",
     "react-dom": "^15.0.0"
   }

@@ -75,21 +75,16 @@ export default class FileDropper extends React.Component<IFileDroperProps, IFile
     const { isDragOver } = this.state;
 
     return (
-      <div className="fileDroper">
-        <div
-          className={`receiver ${isDragOver ? 'onDragOver' : ''}`}
-          onClick={this.handlefileDialog}
-          onDragOver={evt => this.handleDragOver(evt, true)}
-          onDragLeave={evt => this.handleDragOver(evt, false)}
-          onDrop={this.hadnleDrop}
-        >
-          <div>
-            <p>Drop your image here</p>
-            <p>or</p>
-            <p>Click here to select the image</p>
-          </div>
-        </div>
+      <div
+        className={`receiver ${isDragOver ? 'onDragOver' : ''}`}
+        onDragOver={evt => this.handleDragOver(evt, true)}
+        onDragLeave={evt => this.handleDragOver(evt, false)}
+        onDrop={this.hadnleDrop}
+      >
       </div>
     );
   }
 }
+// <p>Drop your image here</p>
+{/* <p>or</p> */}
+  // <p>Click here to select the image</p>

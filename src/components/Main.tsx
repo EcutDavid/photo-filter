@@ -1,7 +1,9 @@
 import * as PIXI from 'pixi.js';
+import Slider from 'rc-slider';
 import * as React from 'react';
 import { fragmentShader } from '../filters/pixelate';
 import FileDropper from './FileDropper';
+import Header from './Header';
 
 import 'styles/main.scss';
 
@@ -16,6 +18,29 @@ interface IComponentState {
   pixelateY: number;
   blur: number;
 }
+
+interface IFilterSetting {
+  label: string;
+  min: number;
+  max: number;
+  key: string;
+}
+const settingList: IFilterSetting[] = [{
+  key: 'blur',
+  label: 'Blur: ',
+  max: 20,
+  min: 0,
+}, {
+  key: 'pixelateX',
+  label: 'PixelateX: ',
+  max: 20,
+  min: 1,
+}, {
+  key: 'pixelateY',
+  label: 'PixelateY: ',
+  max: 20,
+  min: 1,
+}];
 
 export default class Main extends React.Component<{}, IComponentState> {
   private sprite = new PIXI.Sprite(PIXI.Texture.EMPTY);
@@ -89,9 +114,9 @@ export default class Main extends React.Component<{}, IComponentState> {
   }
 
   onSlideChangeGenerator = key => {
-    return (evt: React.FormEvent<HTMLInputElement>) => {
+    return (value: number) => {
       this.needUpdateDownloadLink = true;
-      this.setState({ [key]: evt.currentTarget.value });
+      this.setState({ [key]: value });
     };
   }
 
@@ -101,42 +126,24 @@ export default class Main extends React.Component<{}, IComponentState> {
 
     return (
       <div className="main">
-        <div className="header">
-          <h1>Photo Filter</h1>
-        </div>
+        <Header handleImage={this.handleImage} />
         <FileDropper handleImage={this.handleImage} />
         { hasImg && (
           <div className="control-panel">
-            <div>
-              <span>Blur: </span>
-              <input
-                type="range"
-                min={0}
-                max={20}
-                value={blur}
-                onChange={this.onSlideChangeGenerator('blur')}
-              />
-            </div>
-            <div>
-              <span>PixelateX: </span>
-              <input
-                type="range"
-                min={1}
-                max={20}
-                value={pixelateX}
-                onChange={this.onSlideChangeGenerator('pixelateX')}
-              />
-            </div>
-            <div>
-              <span>PixelateY: </span>
-              <input
-                type="range"
-                min={1}
-                max={20}
-                value={pixelateY}
-                onChange={this.onSlideChangeGenerator('pixelateY')}
-              />
-            </div>
+          {
+            settingList.map((d, i) => (
+              <div key={i} className="setting-item">
+                <span>{d.label}</span>
+                <Slider
+                  className="rc-slider"
+                  min={d.min}
+                  max={d.max}
+                  value={this.state[d.key]}
+                  onChange={this.onSlideChangeGenerator(d.key)}
+                />
+              </div>
+            ))
+          }
           </div>
         )}
         <div
