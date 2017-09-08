@@ -1,4 +1,4 @@
-export const fragmentShader = `
+export default `
 precision mediump float;
 varying vec2 vTextureCoord;
 uniform vec2 size;

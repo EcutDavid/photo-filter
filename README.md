@@ -1,8 +1,6 @@
 # Photo Filter Application
 
-Current State
-![image](https://user-images.githubusercontent.com/10692276/29999978-c991fd52-909e-11e7-9f09-cebf0803b4d8.png)
-[Trello board](https://trello.com/b/7BEOUJ82/image-filter-applicationa)
+![image](https://user-images.githubusercontent.com/10692276/30209095-996269d4-94d9-11e7-866f-b0ed77ce30f1.png)
 
 [The blog about implementation details](https://medium.com/@davidguandev/build-an-online-photo-filter-application-d6e00c36a3bb)
 

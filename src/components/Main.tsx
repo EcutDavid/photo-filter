@@ -1,7 +1,9 @@
 import * as PIXI from 'pixi.js';
 import Slider from 'rc-slider';
 import * as React from 'react';
-import { fragmentShader } from '../filters/pixelate';
+import contrastFS from '../filters/contrast';
+import pixelateFS from '../filters/pixelate';
+import saturationFS from '../filters/saturation';
 import FileDropper from './FileDropper';
 import Header from './Header';
 
@@ -18,6 +20,8 @@ interface IComponentState {
   pixelateY: number;
   blur: number;
   noise: number;
+  contrast: number;
+  saturation: number;
 }
 
 interface IFilterSetting {
@@ -46,6 +50,16 @@ const settingList: IFilterSetting[] = [{
   label: 'PixelateY: ',
   max: 20,
   min: 1,
+}, {
+  key: 'contrast',
+  label: 'Contrast: ',
+  max: 20,
+  min: 0,
+}, {
+  key: 'saturation',
+  label: 'Saturation: ',
+  max: 20,
+  min: 0,
 }];
 
 export default class Main extends React.Component<{}, IComponentState> {
@@ -54,7 +68,7 @@ export default class Main extends React.Component<{}, IComponentState> {
 
   constructor() {
     super();
-    this.state = { hasImg: false, pixelateX: 1, pixelateY: 1, blur: 1, noise: 0 };
+    this.state = { hasImg: false, pixelateX: 1, pixelateY: 1, blur: 1, noise: 0, contrast: 0, saturation: 0 };
   }
 
   componentDidMount() {
@@ -64,23 +78,35 @@ export default class Main extends React.Component<{}, IComponentState> {
     (this.refs.pixi as HTMLElement).appendChild(pixiAPP.view);
     pixiAPP.stage.addChild(this.sprite);
 
-    const blurFilter = new PIXI.filters.BlurFilter(3);
-    const noiseFilter = new PIXI.filters.NoiseFilter(3);
-    const customizedFilter = new PIXI.Filter(
+    const blurFilter = new PIXI.filters.BlurFilter();
+    const noiseFilter = new PIXI.filters.NoiseFilter();
+    const pixelateFilter = new PIXI.Filter(
       PIXI.Filter.defaultVertexSrc,
-      fragmentShader,
+      pixelateFS,
+    );
+    const contrastFilter = new PIXI.Filter(
+      PIXI.Filter.defaultVertexSrc,
+      contrastFS,
+    );
+    const saturationFilter = new PIXI.Filter(
+      PIXI.Filter.defaultVertexSrc,
+      saturationFS,
     );
     this.sprite.filters = [
       noiseFilter,
       blurFilter,
-      customizedFilter,
+      pixelateFilter,
+      contrastFilter,
+      saturationFilter,
     ];
 
     pixiAPP.ticker.add(() => {
-      const { blur, noise, pixelateX, pixelateY } = this.state;
+      const { blur, noise, pixelateX, pixelateY, contrast, saturation } = this.state;
       blurFilter.blur = blur;
       noiseFilter.noise = noise;
-      (customizedFilter.uniforms as any).size = [pixelateX, pixelateY];
+      (pixelateFilter.uniforms as any).size = [pixelateX, pixelateY];
+      (contrastFilter.uniforms as any).contrast = contrast;
+      (saturationFilter.uniforms as any).saturation = saturation;
       pixiAPP.render();
       if (this.needUpdateDownloadLink) {
         (this.refs.link as HTMLElement).setAttribute(
@@ -93,7 +119,8 @@ export default class Main extends React.Component<{}, IComponentState> {
   }
 
   handleImage = (img: HTMLImageElement) => {
-    const process = ({ height, width, texture }) => {
+    const process = (texture) => {
+      const { width, height } = texture;
       this.sprite.texture = texture;
 
       let ratio = 1;
@@ -124,15 +151,11 @@ export default class Main extends React.Component<{}, IComponentState> {
     };
     const src = PIXI.loader.resources[img.src];
     if (src) {
-      const { texture }  = src;
-      process({ height: texture.height, width: texture.width, texture });
+      process(src.texture);
     } else {
-      PIXI.loader
-        .add(img.src)
-        .load(() => {
-          const { texture } = PIXI.loader.resources[img.src];
-          process({ height: texture.height, width: texture.width, texture });
-        });
+      PIXI.loader.add(img.src).load(() => {
+        process(PIXI.loader.resources[img.src].texture);
+      });
     }
   }
 
