@@ -4,6 +4,7 @@ import * as React from 'react';
 import contrastFS from '../filters/contrast';
 import pixelateFS from '../filters/pixelate';
 import saturationFS from '../filters/saturation';
+import triangleFS from '../filters/triangle';
 import FileDropper from './FileDropper';
 import Header from './Header';
 
@@ -22,6 +23,7 @@ interface IComponentState {
   noise: number;
   contrast: number;
   saturation: number;
+  triangle: number;
 }
 
 interface IFilterSetting {
@@ -51,6 +53,11 @@ const settingList: IFilterSetting[] = [{
   max: 20,
   min: 1,
 }, {
+  key: 'triangle',
+  label: 'Trianlge: ',
+  max: 20,
+  min: 1,
+}, {
   key: 'contrast',
   label: 'Contrast: ',
   max: 20,
@@ -68,7 +75,16 @@ export default class Main extends React.Component<{}, IComponentState> {
 
   constructor() {
     super();
-    this.state = { hasImg: false, pixelateX: 1, pixelateY: 1, blur: 1, noise: 0, contrast: 0, saturation: 0 };
+    this.state = {
+      blur: 1,
+      contrast: 0,
+      hasImg: false,
+      noise: 0,
+      pixelateX: 1,
+      pixelateY: 1,
+      saturation: 0,
+      triangle: 1,
+    };
   }
 
   componentDidMount() {
@@ -84,6 +100,10 @@ export default class Main extends React.Component<{}, IComponentState> {
       PIXI.Filter.defaultVertexSrc,
       pixelateFS,
     );
+    const triangleFilter = new PIXI.Filter(
+      PIXI.Filter.defaultVertexSrc,
+      triangleFS,
+    );
     const contrastFilter = new PIXI.Filter(
       PIXI.Filter.defaultVertexSrc,
       contrastFS,
@@ -96,17 +116,19 @@ export default class Main extends React.Component<{}, IComponentState> {
       noiseFilter,
       blurFilter,
       pixelateFilter,
+      triangleFilter,
       contrastFilter,
       saturationFilter,
     ];
 
     pixiAPP.ticker.add(() => {
-      const { blur, noise, pixelateX, pixelateY, contrast, saturation } = this.state;
+      const { blur, noise, pixelateX, pixelateY, triangle, contrast, saturation } = this.state;
       blurFilter.blur = blur;
       noiseFilter.noise = noise;
       (pixelateFilter.uniforms as any).size = [pixelateX, pixelateY];
       (contrastFilter.uniforms as any).contrast = contrast;
       (saturationFilter.uniforms as any).saturation = saturation;
+      (triangleFilter.uniforms as any).size = triangle;
       pixiAPP.render();
       if (this.needUpdateDownloadLink) {
         (this.refs.link as HTMLElement).setAttribute(
