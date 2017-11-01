@@ -34,6 +34,11 @@ export default class FileDropper extends React.Component<IFileDroperProps, IFile
     evt.preventDefault();
 
     const files = evt.dataTransfer.files;
+    if (files.length === 0 && !!evt.dataTransfer.getData('text/uri-list')) {
+      const img = new Image();
+      img.src = evt.dataTransfer.getData('text/uri-list');
+      return this.props.handleImage(img);
+    }
     this.handleFileInput(files);
   }
 
